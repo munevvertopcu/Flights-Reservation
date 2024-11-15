@@ -1,0 +1,46 @@
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #e6dbfe;
+    min-height: 100vh;
+    width: 100%;
+}
+
+.card {
+    width: 80%;
+    height: 80vh;
+    background-color: #f5f3f7;
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+}
+
+.icon-container {
+    display: flex;
+    margin-left: 15px;
+    margin-right: 15px;
+}
+
+.icon {
+    margin-right: 5px;
+}
+
+.text {
+    margin-right: 25px;
+}
+
+.icon-name {
+    font-weight: bold
+}
+
+.flight-parent {
+    overflow-y: scroll;
+    height: 60%;
+    width: 50%;
+}

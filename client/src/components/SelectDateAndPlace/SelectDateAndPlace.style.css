@@ -1,0 +1,81 @@
+.select-wrapper {
+    background-color: hsl(0, 0%, 100%);
+    border-radius: 10px;
+    width: 70%;
+    padding: 10px;
+}
+
+.select-container {
+    display: flex;
+}
+
+.input-wrapper {
+    position: relative;
+}
+
+.input-1 {
+    border: 2px solid #dbdbdb;
+    padding: 5px;
+    padding-left: 35px;
+    border-top-left-radius: 15px;
+    border-bottom-left-radius: 15px;
+    margin-right: 3px;
+    width: 150px;
+}
+
+.input-2 {
+    border: 2px solid #dbdbdb;
+    padding: 5px;
+    padding-left: 35px;
+    border-top-right-radius: 15px;
+    border-bottom-right-radius: 15px;
+    width: 150px;
+}
+
+.input-icon {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%); /*İkonu dikey olarak ortalar */
+}
+
+.select-header {
+    display: flex;
+    justify-content: space-between;
+}
+
+.icon-header {
+    display: flex;
+}
+
+.plane-icon {
+    margin-right: 7px;
+}
+
+.button-wrapper {
+    display: flex;
+    align-items: center;
+}
+
+.button-1 {
+    border: 2px solid transparent;
+    border-top-left-radius: 15px;
+    border-bottom-left-radius: 15px;
+    background-color: #4c2897;
+    padding: 8px;
+}
+
+.button-2 {
+    border: 2px solid transparent;
+    border-top-right-radius: 15px;
+    border-bottom-right-radius: 15px;
+    padding: 8px;
+}
+
+.show-button {
+    background-color: #4c2897;
+    color: #fff;
+    border-radius: 7px;
+    padding: 7px;
+    margin-top: 20px;
+}
