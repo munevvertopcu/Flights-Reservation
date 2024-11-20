@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useSelector, useDispatch } from 'react-redux';
+import axios from "axios";
 import './Home.style.css';
 import SelectDateAndPlace from "../../components/SelectDateAndPlace";
 import airplane_icon from '../../assets/airplane_icon.svg';
@@ -13,6 +14,7 @@ function Home(props) {
     const [route, setRoute] = useState("");
     const [startDate, setStartDate] = useState();
     const [hasFetched, setHasFetched] = useState(false);
+    const [city, setCity] = useState("");
 
     const dispatch = useDispatch();
     const { flights, page, totalPages, isLoading } = useSelector((state) => state.flights);
@@ -36,7 +38,25 @@ function Home(props) {
     const handleButtonClick = () => {
         if (!hasFetched) {
             dispatch(fetchFlights({ date: formatDate(startDate), route: route, page: page }));
+            fetchCityName();
             setHasFetched(true);
+        }
+    };
+
+    const fetchCityName = async () => {
+        try {
+            const response = await axios.get(`/api/public-flights/destinations/${route}`, {
+                headers: {
+                    'app_id': 'c1ac8def',
+                    'app_key': 'bdd4fde3528d88146542630a1a2a5d47',
+                    'ResourceVersion': 'v4',
+                    'Accept': 'application/json',
+                }
+            })
+            setCity(response.data.city);
+            console.log(response.data.city)
+        } catch (error) {
+            console.log(error)
         }
     };
 
@@ -90,29 +110,21 @@ function Home(props) {
                 </div>
                 <SelectDateAndPlace route={route} startDate={startDate} setRoute={setRoute} setStartDate={setStartDate} handleFetchClick={handleButtonClick} />
                 {
-                   
-                
                     flights?.length > 0 ?
                         <div className="flight-parent" ref={scrollContainerRef}>
                             {
                                 flights?.map((item) =>
-
-                                    <Flights data={item} />
-
-
+                                    <Flights city={city} data={item} />
                                 )
                             }
                         </div>
-
                         :
                         isLoading ?
-                        <img width={50} height={50} src="./spinner.svg" className="loading"/>
-                        
-                : null
+                            <img width={50} height={50} src="./spinner.svg" className="loading" />
 
-                
+                            : null
                 }
-                
+
             </div>
         </div>
     )
