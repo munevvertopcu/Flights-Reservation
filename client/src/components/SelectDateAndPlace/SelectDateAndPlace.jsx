@@ -9,33 +9,14 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { fetchFlights } from "../../redux/features/flightList/flightListSlice";
 
-function SelectDateAndPlace(props) {
+function SelectDateAndPlace({route, startDate, setRoute, setStartDate, handleFetchClick}) {
 
-    const dispatch = useDispatch();
-    const flights = useSelector((state) => state.flights);
-
-    const [route, setRoute] = useState("");
-    const [startDate, setStartDate] = useState();
     const [endDate, setEndDate] = useState();
     const [selectionMode, setSelectionMode] = useState(1);
 
     const updatedSwitchData = (val) => {
         setSelectionMode(val);
     };
-
-    function formatDate(date) {
-        var d = new Date(date),
-            month = '' + (d.getMonth() + 1),
-            day = '' + d.getDate(),
-            year = d.getFullYear();
-
-        if (month.length < 2)
-            month = '0' + month;
-        if (day.length < 2)
-            day = '0' + day;
-
-        return [year, month, day].join('-');
-    }
 
     return (
         <div className="select-wrapper">
@@ -80,7 +61,7 @@ function SelectDateAndPlace(props) {
                     </div>
                 }
             </div>
-            <button className="show-button" onClick={() => dispatch(fetchFlights({ route: route, date: formatDate(startDate) }))}>Show Flights</button>
+            <button className="show-button" onClick={handleFetchClick}>Show Flights</button>
         </div>
     )
 }

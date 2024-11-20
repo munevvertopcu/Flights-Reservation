@@ -1,15 +1,77 @@
-import React, { useState, useEffect } from "react";
-import { useSelector } from 'react-redux';
+import React, { useState, useEffect, useRef } from "react";
+import { useSelector, useDispatch } from 'react-redux';
 import './Home.style.css';
 import SelectDateAndPlace from "../../components/SelectDateAndPlace";
 import airplane_icon from '../../assets/airplane_icon.svg';
 import tag from '../../assets/tag.svg';
 import world from '../../assets/world.svg';
 import Flights from '../../components/Flights';
+import { fetchFlights, resetFlights } from "../../redux/features/flightList/flightListSlice";
 
 function Home(props) {
 
-    const flights = useSelector((state) => state.flights.data);
+    const [route, setRoute] = useState("");
+    const [startDate, setStartDate] = useState();
+    const [hasFetched, setHasFetched] = useState(false);
+
+    const dispatch = useDispatch();
+    const { flights, page, totalPages, isLoading } = useSelector((state) => state.flights);
+
+    const scrollContainerRef = useRef(null);
+
+    function formatDate(date) {
+        var d = new Date(date),
+            month = '' + (d.getMonth() + 1),
+            day = '' + d.getDate(),
+            year = d.getFullYear();
+
+        if (month.length < 2)
+            month = '0' + month;
+        if (day.length < 2)
+            day = '0' + day;
+
+        return [year, month, day].join('-');
+    }
+
+    const handleButtonClick = () => {
+        if (!hasFetched) {
+            dispatch(fetchFlights({ date: formatDate(startDate), route: route, page: page }));
+            setHasFetched(true);
+        }
+    };
+
+    useEffect(() => {
+        const handleScroll = () => {
+            const container = scrollContainerRef.current;
+            if (!container) return;
+
+            // Scroll'un sonuna yaklaştığımızı kontrol et
+            if (
+                container.scrollTop + container.clientHeight >=
+                container.scrollHeight * 0.9
+            ) {
+                if (!isLoading && page <= totalPages) {
+                    dispatch(fetchFlights({ date: formatDate(startDate), route: route, page: page }));
+                }
+            }
+        };
+
+        const container = scrollContainerRef.current;
+        if (container) {
+            container.addEventListener("scroll", handleScroll);
+        }
+
+        return () => {
+            if (container) {
+                container.removeEventListener("scroll", handleScroll);
+            }
+        };
+    }, [dispatch, startDate, route, page, totalPages, isLoading]);
+
+    useEffect(() => {
+        dispatch(resetFlights());
+        setHasFetched(false);
+    }, [dispatch, startDate, route]);
 
     return (
         <div className='container'>
@@ -26,12 +88,14 @@ function Home(props) {
                         <p>Discover</p>
                     </div>
                 </div>
-                <SelectDateAndPlace />
+                <SelectDateAndPlace route={route} startDate={startDate} setRoute={setRoute} setStartDate={setStartDate} handleFetchClick={handleButtonClick} />
                 {
-                    flights?.flights?.length > 0 ?
-                        <div className="flight-parent">
+                   
+                
+                    flights?.length > 0 ?
+                        <div className="flight-parent" ref={scrollContainerRef}>
                             {
-                                flights?.flights?.map((item) =>
+                                flights?.map((item) =>
 
                                     <Flights data={item} />
 
@@ -41,9 +105,14 @@ function Home(props) {
                         </div>
 
                         :
-                        null
+                        isLoading ?
+                        <img width={50} height={50} src="./spinner.svg" className="loading"/>
+                        
+                : null
 
+                
                 }
+                
             </div>
         </div>
     )

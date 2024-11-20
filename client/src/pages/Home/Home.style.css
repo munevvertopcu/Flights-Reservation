@@ -43,4 +43,16 @@
     overflow-y: scroll;
     height: 60%;
     width: 50%;
+    margin-top: 15px;
+    margin-left: 15px;
+}
+
+.flight-parent::-webkit-scrollbar {
+    display: none;
+    /* Chrome, Safari ve Edge */
+}
+
+.loading {
+   justify-content: center;
+   align-items: center;
 }
