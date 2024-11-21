@@ -6,7 +6,7 @@ function Flights({ data, city }) {
 
     return (
         <div className="flight-container">
-            <h3>{`Istanbul - ${city}`}</h3>
+            <h5>{`Istanbul - ${city}`}</h5>
         </div>
     )
 }

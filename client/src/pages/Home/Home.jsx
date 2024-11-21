@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useSelector, useDispatch } from 'react-redux';
-import axios from "axios";
 import './Home.style.css';
+import instance from "../../services/instance";
 import SelectDateAndPlace from "../../components/SelectDateAndPlace";
 import airplane_icon from '../../assets/airplane_icon.svg';
 import tag from '../../assets/tag.svg';
@@ -45,7 +45,7 @@ function Home(props) {
 
     const fetchCityName = async () => {
         try {
-            const response = await axios.get(`/api/public-flights/destinations/${route}`, {
+            const response = await instance.get(`/destinations/${route}`, {
                 headers: {
                     'app_id': 'c1ac8def',
                     'app_key': 'bdd4fde3528d88146542630a1a2a5d47',
@@ -113,18 +113,17 @@ function Home(props) {
                     flights?.length > 0 ?
                         <div className="flight-parent" ref={scrollContainerRef}>
                             {
-                                flights?.map((item) =>
-                                    <Flights city={city} data={item} />
+                                flights?.map((item, index) =>
+                                    <Flights city={city} data={item} key={index}/>
                                 )
                             }
+                            {
+                                isLoading &&
+                                <img src="./spinner.svg" className="loading" />
+                            }
                         </div>
-                        :
-                        isLoading ?
-                            <img width={50} height={50} src="./spinner.svg" className="loading" />
-
-                            : null
+                        : null
                 }
-
             </div>
         </div>
     )

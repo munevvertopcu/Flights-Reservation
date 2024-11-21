@@ -45,6 +45,8 @@
     width: 50%;
     margin-top: 15px;
     margin-left: 15px;
+    display: flex;
+    flex-direction: column;
 }
 
 .flight-parent::-webkit-scrollbar {
@@ -53,6 +55,5 @@
 }
 
 .loading {
-   justify-content: center;
-   align-items: center;
+   align-self: center;
 }
