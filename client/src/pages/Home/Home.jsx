@@ -37,9 +37,12 @@ function Home() {
     }
 
     const handleButtonClick = () => {
-        dispatch(resetFlights())
-        dispatch(fetchFlights({ date: formatDate(startDate), route: route, page: 0, direction: selectionDirectionMode === 1 ? "D" : "A" }));
-        fetchCityName();
+        if(!hasFetched) {
+            dispatch(resetFlights())
+            dispatch(fetchFlights({ date: formatDate(startDate), route: route, page: 0, direction: selectionDirectionMode === 1 ? "D" : "A" }));
+            fetchCityName();
+            setHasFetched(true);
+        }
     };
 
     const fetchCityName = async () => {
@@ -85,6 +88,10 @@ function Home() {
             }
         };
     }, [dispatch, startDate, route, page, totalPages, isLoading]);
+
+    useEffect(() => {
+       setHasFetched(false)
+    }, [dispatch, startDate, route, selectionDirectionMode]);
 
     return (
         <div className='container'>
