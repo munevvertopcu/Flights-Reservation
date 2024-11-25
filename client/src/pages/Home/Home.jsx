@@ -9,12 +9,13 @@ import world from '../../assets/world.svg';
 import Flights from '../../components/Flights';
 import { fetchFlights, resetFlights } from "../../redux/features/flightList/flightListSlice";
 
-function Home(props) {
+function Home() {
 
     const [route, setRoute] = useState("");
     const [startDate, setStartDate] = useState();
     const [hasFetched, setHasFetched] = useState(false);
     const [city, setCity] = useState("");
+    const [selectionDirectionMode, setSelectionDirectionMode] = useState(1);
 
     const dispatch = useDispatch();
     const { flights, page, totalPages, isLoading } = useSelector((state) => state.flights);
@@ -36,11 +37,9 @@ function Home(props) {
     }
 
     const handleButtonClick = () => {
-        if (!hasFetched) {
-            dispatch(fetchFlights({ date: formatDate(startDate), route: route, page: page }));
-            fetchCityName();
-            setHasFetched(true);
-        }
+        dispatch(resetFlights())
+        dispatch(fetchFlights({ date: formatDate(startDate), route: route, page: 0, direction: selectionDirectionMode === 1 ? "D" : "A" }));
+        fetchCityName();
     };
 
     const fetchCityName = async () => {
@@ -54,7 +53,6 @@ function Home(props) {
                 }
             })
             setCity(response.data.city);
-            console.log(response.data.city)
         } catch (error) {
             console.log(error)
         }
@@ -71,7 +69,7 @@ function Home(props) {
                 container.scrollHeight * 0.9
             ) {
                 if (!isLoading && page <= totalPages) {
-                    dispatch(fetchFlights({ date: formatDate(startDate), route: route, page: page }));
+                    dispatch(fetchFlights({ date: formatDate(startDate), route: route, page: page, direction: selectionDirectionMode === 1 ? "D" : "A" }));
                 }
             }
         };
@@ -88,11 +86,6 @@ function Home(props) {
         };
     }, [dispatch, startDate, route, page, totalPages, isLoading]);
 
-    useEffect(() => {
-        dispatch(resetFlights());
-        setHasFetched(false);
-    }, [dispatch, startDate, route]);
-
     return (
         <div className='container'>
             <div className='card'>
@@ -108,13 +101,13 @@ function Home(props) {
                         <p>Discover</p>
                     </div>
                 </div>
-                <SelectDateAndPlace route={route} startDate={startDate} setRoute={setRoute} setStartDate={setStartDate} handleFetchClick={handleButtonClick} />
+                <SelectDateAndPlace route={route} startDate={startDate} setRoute={setRoute} setStartDate={setStartDate} handleFetchClick={handleButtonClick} selectionDirectionMode={selectionDirectionMode} setSelectionDirectionMode={setSelectionDirectionMode} />
                 {
                     flights?.length > 0 ?
                         <div className="flight-parent" ref={scrollContainerRef}>
                             {
                                 flights?.map((item, index) =>
-                                    <Flights city={city} data={item} key={index}/>
+                                    <Flights city={city} data={item} key={index} />
                                 )
                             }
                             {

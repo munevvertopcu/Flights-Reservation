@@ -8,13 +8,13 @@ const initialState = {
     totalPages: null,
 }
 
-export const fetchFlights = createAsyncThunk('flights/fetchFlights', async ({ route, date, page }) => {
+export const fetchFlights = createAsyncThunk('flights/fetchFlights', async ({ route, date, page, direction }) => {
     try {
-        const response = await instance.get(`/flights?scheduleDate=${date}&route=${route}&page=${page}`);
+        const response = await instance.get(`/flights?scheduleDate=${date}&flightDirection=${direction}&route=${route}&page=${page}`);
         const linkHeader = response.headers.link;
         const data = response.data.flights;
         console.log("API Response:", response.headers.link);
-        return { flights: data, linkHeader: linkHeader || null};
+        return { flights: data, linkHeader: linkHeader || null };
     } catch (error) {
         return error
     }
@@ -37,7 +37,7 @@ const flightListSlice = createSlice({
             })
             .addCase(fetchFlights.fulfilled, (state, action) => {
                 state.isLoading = false;
-                const {  linkHeader, flights } = action.payload;
+                const { linkHeader, flights } = action.payload;
                 state.flights = [...state.flights, ...flights];
                 state.page += 1;
 
