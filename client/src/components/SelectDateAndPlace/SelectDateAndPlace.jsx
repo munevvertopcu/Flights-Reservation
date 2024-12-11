@@ -39,7 +39,7 @@ function SelectDateAndPlace({ route, startDate, setRoute, setStartDate, handleFe
                     <img className="input-icon" src={plane_take_off} />
                 </div>
                 <div className="input-wrapper">
-                    <input className="input-2 plane-icon" value={selectionDirectionMode === 2 ? "Amsterdam" : route} onChange={(text) => setRoute(text.target.value)} />
+                    <input className="input-2 plane-icon" value={selectionDirectionMode === 2 ? "Amsterdam" : route} onChange={(text) => setRoute(text.target.value) } />
                     <img className="input-icon" src={plane_land} />
                 </div>
                 <div className="input-wrapper">

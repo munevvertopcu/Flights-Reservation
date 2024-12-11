@@ -13,7 +13,6 @@ export const fetchFlights = createAsyncThunk('flights/fetchFlights', async ({ ro
         const response = await instance.get(`/flights?scheduleDate=${date}&flightDirection=${direction}&route=${route}&page=${page}`);
         const linkHeader = response.headers.link;
         const data = response.data.flights;
-        console.log("API Response:", response.headers.link);
         return { flights: data, linkHeader: linkHeader || null };
     } catch (error) {
         return error

@@ -22,6 +22,8 @@ function Home() {
 
     const scrollContainerRef = useRef(null);
 
+    console.log(flights)
+
     function formatDate(date) {
         var d = new Date(date),
             month = '' + (d.getMonth() + 1),
@@ -37,8 +39,8 @@ function Home() {
     }
 
     const handleButtonClick = () => {
-        if(!hasFetched) {
-            dispatch(resetFlights())
+        if (!hasFetched) {
+            dispatch(resetFlights());
             dispatch(fetchFlights({ date: formatDate(startDate), route: route, page: 0, direction: selectionDirectionMode === 1 ? "D" : "A" }));
             fetchCityName();
             setHasFetched(true);
@@ -90,7 +92,7 @@ function Home() {
     }, [dispatch, startDate, route, page, totalPages, isLoading]);
 
     useEffect(() => {
-       setHasFetched(false)
+        setHasFetched(false)
     }, [dispatch, startDate, route, selectionDirectionMode]);
 
     return (

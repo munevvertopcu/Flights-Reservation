@@ -2,5 +2,29 @@
     background-color: hsl(0, 0%, 100%);
     border-radius: 10px;
     margin-bottom: 15px;
-    padding: 10px
+    padding: 10px;
+}
+
+.icon-and-header {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.flight-header {
+    font-size: 10px;
+    margin-left: 4px;
+}
+
+.time-container {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+}
+
+.line {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
