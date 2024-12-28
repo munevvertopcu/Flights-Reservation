@@ -6,19 +6,21 @@ import calender from '../../assets/calender.svg';
 import plane from '../../assets/plane.svg';
 import DatePicker from "react-datepicker";
 import SelectionButton from "../SelectionButton";
+import { useSelector, useDispatch } from "react-redux";
 import "react-datepicker/dist/react-datepicker.css";
+import { setSelectionTripMode, setSelectionDirectionMode } from "../../redux/features/flightList/flightListSlice";
 
-function SelectDateAndPlace({ route, startDate, setRoute, setStartDate, handleFetchClick, selectionDirectionMode, setSelectionDirectionMode }) {
+function SelectDateAndPlace({ route, startDate, setRoute, setStartDate, handleFetchClick, endDate, setEndDate }) {
 
-    const [endDate, setEndDate] = useState();
-    const [selectionTripMode, setSelectionTripMode] = useState(1);
+    const { selectionTripMode, selectionDirectionMode } = useSelector((state) => state.flights);
+    const dispatch = useDispatch();
 
     const updatedSwitchDirection = (val) => {
-        setSelectionDirectionMode(val);
+        dispatch(setSelectionDirectionMode(val));
     };
 
     const updatedSwitchTrip = (val) => {
-        setSelectionTripMode(val);
+        dispatch(setSelectionTripMode(val));
     };
 
     return (
@@ -39,7 +41,7 @@ function SelectDateAndPlace({ route, startDate, setRoute, setStartDate, handleFe
                     <img className="input-icon" src={plane_take_off} />
                 </div>
                 <div className="input-wrapper">
-                    <input className="input-2 plane-icon" value={selectionDirectionMode === 2 ? "Amsterdam" : route} onChange={(text) => setRoute(text.target.value) } />
+                    <input className="input-2 plane-icon" value={selectionDirectionMode === 2 ? "Amsterdam" : route} onChange={(text) => setRoute(text.target.value)} />
                     <img className="input-icon" src={plane_land} />
                 </div>
                 <div className="input-wrapper">

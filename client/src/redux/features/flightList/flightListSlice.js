@@ -6,11 +6,14 @@ const initialState = {
     isLoading: false,
     page: 0,
     totalPages: null,
+    selectionTripMode: 1,
+    selectionDirectionMode: 1
 }
 
 export const fetchFlights = createAsyncThunk('flights/fetchFlights', async ({ route, date, page, direction }) => {
     try {
         const response = await instance.get(`/flights?scheduleDate=${date}&flightDirection=${direction}&route=${route}&page=${page}`);
+        console.log(response)
         const linkHeader = response.headers.link;
         const data = response.data.flights;
         return { flights: data, linkHeader: linkHeader || null };
@@ -23,10 +26,16 @@ const flightListSlice = createSlice({
     name: 'flights',
     initialState,
     reducers: {
-        resetFlights(state) {
+        resetFlights: (state) => {
             state.flights = [];
             state.page = 0;
             state.totalPages = null;
+        },
+        setSelectionTripMode: (state, action) => {
+            state.selectionTripMode = action.payload
+        },
+        setSelectionDirectionMode: (state, action) => {
+            state.selectionDirectionMode = action.payload
         }
     },
     extraReducers: (builder) => {
@@ -54,5 +63,5 @@ const flightListSlice = createSlice({
     }
 })
 
-export const { resetFlights } = flightListSlice.actions;
+export const { resetFlights, setSelectionTripMode, setSelectionDirectionMode } = flightListSlice.actions;
 export default flightListSlice.reducer;

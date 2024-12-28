@@ -1,8 +1,13 @@
 .flight-container {
     background-color: hsl(0, 0%, 100%);
-    border-radius: 10px;
+    border-radius: 5px;
     margin-bottom: 15px;
-    padding: 10px;
+}
+
+#h5 {
+    padding-top: 10px;
+    margin-left: 20px;
+    margin-right: 20px;
 }
 
 .icon-and-header {
@@ -20,6 +25,8 @@
     display: flex;
     justify-content: space-between;
     margin-top: 10px;
+    margin-right: 20px;
+    margin-left: 20px;
 }
 
 .line {
@@ -27,4 +34,25 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
+}
+
+.price-wrapper {
+    margin-left: 20px;
+    margin-top: 8px;
+    display: flex;
+    position: relative;
+    justify-content: space-between;
+}
+
+.book-flight-button {
+    background-color: #4c2897;
+    color: #fff;
+    border-color: #4c2897;
+    border-top-left-radius: 5px;
+    padding: 10px;
+}
+
+#p {
+    font-size: 11px;
+    padding-bottom: 5px;
 }

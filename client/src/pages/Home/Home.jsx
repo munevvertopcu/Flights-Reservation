@@ -7,38 +7,42 @@ import airplane_icon from '../../assets/airplane_icon.svg';
 import tag from '../../assets/tag.svg';
 import world from '../../assets/world.svg';
 import Flights from '../../components/Flights';
-import { fetchFlights, resetFlights } from "../../redux/features/flightList/flightListSlice";
+import { fetchFlights, resetFlights, } from "../../redux/features/flightList/flightListSlice";
+import { formatDate } from "../../helpers";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function Home() {
 
     const [route, setRoute] = useState("");
     const [startDate, setStartDate] = useState();
+    const [endDate, setEndDate] = useState();
     const [hasFetched, setHasFetched] = useState(false);
     const [city, setCity] = useState("");
-    const [selectionDirectionMode, setSelectionDirectionMode] = useState(1);
 
     const dispatch = useDispatch();
-    const { flights, page, totalPages, isLoading } = useSelector((state) => state.flights);
+    const { flights, page, totalPages, isLoading, selectionDirectionMode, selectionTripMode } = useSelector((state) => state.flights);
 
     const scrollContainerRef = useRef(null);
 
-    console.log(flights)
-
-    function formatDate(date) {
-        var d = new Date(date),
-            month = '' + (d.getMonth() + 1),
-            day = '' + d.getDate(),
-            year = d.getFullYear();
-
-        if (month.length < 2)
-            month = '0' + month;
-        if (day.length < 2)
-            day = '0' + day;
-
-        return [year, month, day].join('-');
-    }
-
     const handleButtonClick = () => {
+
+        // const requiredFields = [route, startDate];
+        // if (selectionTripMode === 1) requiredFields.push(endDate);
+
+        // // Alanlar boşsa hata mesajı göster
+        // if (requiredFields.some(field => !field)) {
+        //     return toast.error("Please fill in all fields!");
+        // }
+
+        if ((selectionTripMode === 2) && (!route || !startDate)) {
+            return toast.error("Please fill in all fields!")
+        }
+
+        if ((selectionTripMode === 1) && (!route || !startDate || !endDate)) {
+            return toast.error("Please fill in all fields!")
+        }
+
         if (!hasFetched) {
             dispatch(resetFlights());
             dispatch(fetchFlights({ date: formatDate(startDate), route: route, page: 0, direction: selectionDirectionMode === 1 ? "D" : "A" }));
@@ -110,7 +114,7 @@ function Home() {
                         <p>Discover</p>
                     </div>
                 </div>
-                <SelectDateAndPlace route={route} startDate={startDate} setRoute={setRoute} setStartDate={setStartDate} handleFetchClick={handleButtonClick} selectionDirectionMode={selectionDirectionMode} setSelectionDirectionMode={setSelectionDirectionMode} />
+                <SelectDateAndPlace route={route} startDate={startDate} setRoute={setRoute} setStartDate={setStartDate} handleFetchClick={handleButtonClick} endDate={endDate} setEndDate={setEndDate} />
                 {
                     flights?.length > 0 ?
                         <div className="flight-parent" ref={scrollContainerRef}>
@@ -126,6 +130,7 @@ function Home() {
                         </div>
                         : null
                 }
+                <ToastContainer />
             </div>
         </div>
     )
