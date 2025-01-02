@@ -5,11 +5,9 @@ var httpClient = axios.create({
 });
 
 export const Post = (url, data) => {
-    var response;
-    httpClient.post(url, data)
+    return httpClient.post(url, data)
         .then((res) => {
-            response = res.data;
-            console.log(response)
+            return res.data
         })
         .catch((error) => {
             if (error.response) {
@@ -23,7 +21,22 @@ export const Post = (url, data) => {
                 // There was a problem with the request configuration
                 console.error('There was a problem:', error.message);
             }
-        }
-        )
-    return response;
+        })
+}
+
+export const Get = (url) => {
+    return httpClient.get(url)
+        .then((res) => {
+            return res.data;
+        })
+        .catch((error) => {
+            if (error.response) {
+                console.error('Error code:', error.response.status);
+                console.error('Error data:', error.response.data);
+            } else if (error.request) {
+                console.error('No response from server:', error.request);
+            } else {
+                console.error('There was a problem:', error.message);
+            }
+        })
 }

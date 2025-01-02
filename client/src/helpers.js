@@ -55,6 +55,25 @@ export const formatDate = (date) => {
     return [year, month, day].join('-');
 }
 
+export const addTimeAndFormat = (dateString, hoursToAdd, minutesToAdd) => {
+    const date = new Date(dateString); // String'i Date nesnesine çevir (format : 2024-12-29T19:40:00.000+01:00)
+
+    // Saat ve dakika ekle
+    date.setHours(date.getHours() + hoursToAdd);
+    date.setMinutes(date.getMinutes() + minutesToAdd);
+
+    // Saat ve dakika değerlerini al ve iki basamaklı hale getir
+    const options = {
+        timeZone: 'Europe/Amsterdam',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false, // 24 saat formatı için
+    };
+    const amsterdamTime = new Intl.DateTimeFormat('en-US', options).format(date);
+
+    return { amsterdamTime: amsterdamTime, date: date }; // hh:mm formatında döndür
+}
+
 export const getRandomPrice = () => {
     const prices = [235, 304, 378, 258, 342, 430]
     const randomIndex = Math.floor(Math.random() * prices.length);

@@ -13,7 +13,6 @@ const initialState = {
 export const fetchFlights = createAsyncThunk('flights/fetchFlights', async ({ route, date, page, direction }) => {
     try {
         const response = await instance.get(`/flights?scheduleDate=${date}&flightDirection=${direction}&route=${route}&page=${page}`);
-        console.log(response)
         const linkHeader = response.headers.link;
         const data = response.data.flights;
         return { flights: data, linkHeader: linkHeader || null };
