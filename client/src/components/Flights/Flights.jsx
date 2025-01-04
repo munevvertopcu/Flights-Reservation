@@ -5,8 +5,9 @@ import flight_landing from '../../assets/flight_landing.svg';
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import plane from '../../assets/plane.svg';
-import { hoursDifference, getRandomPrice, addTimeAndFormat, calculateFlightDate } from "../../helpers";
+import { hoursDifference, getRandomPrice, addTimeAndFormat } from "../../helpers";
 import { Post } from "../../controllers/httpControllers";
+import FlightDetail from "./FlightDetail";
 
 function Flights({ data, city }) {
 
@@ -29,27 +30,35 @@ function Flights({ data, city }) {
     function handleFlightBooking() {
 
         const currentDate = new Date();
-        const flightDate = calculateFlightDate(data.scheduleDateTime, data.flightDirection);
+        const flightDate = new Date(
+            isDeparture
+                ? data.scheduleDateTime
+                : addTimeAndFormat(data.scheduleDateTime, -2, -30).date
+        );
 
         if (flightDate.getTime() < currentDate.getTime()) {
-            return toast.error("You can't buy past-dated tickets");
+            toast.error("You can't buy past-dated tickets");
+            return;
         }
-        Post("/save", { scheduleTime: data.scheduleTime, flightDirection: data.flightDirection, route: data.route.destinations[0], scheduleDate: data.scheduleDate })
-            .then(() => toast.info("Your flight has been saved"))
+        Post("/save", {
+            departureTime: departureTime,
+            arrivalTime: arrivalTime,
+            departureAirport: departureAirport,
+            arrivalAirport: arrivalAirport,
+            scheduleDate: data.scheduleDate
+        }).then(() => toast.info("Your flight has been saved"))
     }
 
     return (
         <div className="flight-container">
             <h5 id="h5">{isDeparture ? `Amsterdam - ${city}` : `${city} - Amsterdam `}</h5>
             <div className="time-container">
-                <div>
-                    <div className="icon-and-header">
-                        <img src={flight_takeoff} />
-                        <p className="flight-header">Departure</p>
-                    </div>
-                    <h5>{departureTime}</h5>
-                    <p style={{ fontSize: 10 }} >Airport: {departureAirport}</p>
-                </div>
+                <FlightDetail
+                    iconName={flight_takeoff}
+                    header="Departure"
+                    time={departureTime}
+                    airport={departureAirport}
+                />
                 <div className="line">------</div>
                 <div className="line">
                     <img src={plane} height={15} />
@@ -58,14 +67,12 @@ function Flights({ data, city }) {
                     </p>
                 </div>
                 <div className="line">------</div>
-                <div>
-                    <div className="icon-and-header">
-                        <img src={flight_landing} />
-                        <p className="flight-header">Arrival</p>
-                    </div>
-                    <h5>{arrivalTime}</h5>
-                    <p style={{ fontSize: 10 }} >Airport: {arrivalAirport}</p>
-                </div>
+                <FlightDetail
+                    iconName={flight_landing}
+                    header="Arrival"
+                    time={arrivalTime}
+                    airport={arrivalAirport}
+                />
             </div>
             <div className="price-wrapper">
                 <div>

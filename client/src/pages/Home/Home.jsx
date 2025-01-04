@@ -31,7 +31,8 @@ function Home() {
         if (selectionTripMode === 1) requiredFields.push(endDate);
 
         if (requiredFields.some(field => !field)) {
-            return toast.error("Please fill in all fields!");
+            toast.error("Please fill in all fields!");
+            return;
         }
 
         if (!hasFetched) {
