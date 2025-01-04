@@ -23,7 +23,7 @@ export const hoursDifference = (start, end) => {
     return `${diffHours}h ${remainingMinutes}m`;
 }
 
-export const getTime = (timeString, hoursToAdd, minutesToAdd) => {
+export const addTime = (timeString, hoursToAdd, minutesToAdd) => {
     // "hh:mm" formatındaki stringi parçala
     const [hours, minutes] = timeString.split(':').map(Number);
 
@@ -78,4 +78,13 @@ export const getRandomPrice = () => {
     const prices = [235, 304, 378, 258, 342, 430]
     const randomIndex = Math.floor(Math.random() * prices.length);
     return prices[randomIndex];
+}
+
+export const calculateFlightDate = (scheduleDateTime, direction) => {
+    if (direction === "D") {
+        return new Date(scheduleDateTime);
+    } else {
+        const adjustedDate = addTimeAndFormat(scheduleDateTime, -2, -30).date;
+        return new Date(adjustedDate);
+    }
 }

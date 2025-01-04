@@ -27,20 +27,11 @@ function Home() {
 
     const handleButtonClick = () => {
 
-        // const requiredFields = [route, startDate];
-        // if (selectionTripMode === 1) requiredFields.push(endDate);
+        const requiredFields = [route, startDate];
+        if (selectionTripMode === 1) requiredFields.push(endDate);
 
-        // // Alanlar boşsa hata mesajı göster
-        // if (requiredFields.some(field => !field)) {
-        //     return toast.error("Please fill in all fields!");
-        // }
-
-        if ((selectionTripMode === 2) && (!route || !startDate)) {
-            return toast.error("Please fill in all fields!")
-        }
-
-        if ((selectionTripMode === 1) && (!route || !startDate || !endDate)) {
-            return toast.error("Please fill in all fields!")
+        if (requiredFields.some(field => !field)) {
+            return toast.error("Please fill in all fields!");
         }
 
         if (!hasFetched) {
@@ -53,14 +44,7 @@ function Home() {
 
     const fetchCityName = async () => {
         try {
-            const response = await instance.get(`/destinations/${route}`, {
-                headers: {
-                    'app_id': 'c1ac8def',
-                    'app_key': 'bdd4fde3528d88146542630a1a2a5d47',
-                    'ResourceVersion': 'v4',
-                    'Accept': 'application/json',
-                }
-            })
+            const response = await instance.get(`/destinations/${route}`)
             setCity(response.data.city);
         } catch (error) {
             console.log(error)
