@@ -17,8 +17,16 @@ const flightsSchema = new mongoose.Schema({
         type: String,
         require: true
     },
-    scheduleDate: {
+    scheduleDateTime: {
         type: String,
+        require: true
+    },
+    flightName: {
+        type: String,
+        require: true
+    },
+    price: {
+        type: Number,
         require: true
     }
 })

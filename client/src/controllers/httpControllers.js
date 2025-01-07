@@ -21,11 +21,12 @@ export const Post = (url, data) => {
                 // There was a problem with the request configuration
                 console.error('There was a problem:', error.message);
             }
+            throw error;
         })
 }
 
-export const Get = (url) => {
-    return httpClient.get(url)
+export const Get = () => {
+    return httpClient.get()
         .then((res) => {
             return res.data;
         })

@@ -101,7 +101,8 @@ function Home() {
                 </div>
                 <SelectDateAndPlace route={route} startDate={startDate} setRoute={setRoute} setStartDate={setStartDate} handleFetchClick={handleButtonClick} endDate={endDate} setEndDate={setEndDate} />
                 {
-                    flights?.length > 0 ?
+                    isLoading && flights?.length == 0 ?
+                        <img src="./spinner.svg" className="spinner" /> :
                         <div className="flight-parent" ref={scrollContainerRef}>
                             {
                                 flights?.map((item, index) =>
@@ -113,7 +114,6 @@ function Home() {
                                 <img src="./spinner.svg" className="loading" />
                             }
                         </div>
-                        : null
                 }
                 <ToastContainer />
             </div>

@@ -7,10 +7,26 @@ module.exports.getFlights = async (req, res) => {
 
 module.exports.saveFlights = async (req, res) => {
 
-    const { departureTime, arrivalTime, departureAirport, arrivalAirport, scheduleDate } = req.body
+    const {
+        departureTime,
+        arrivalTime,
+        departureAirport,
+        arrivalAirport,
+        scheduleDateTime,
+        flightName,
+        price
+    } = req.body
 
     FlightsModel
-        .create({ departureTime, arrivalTime, departureAirport, arrivalAirport, scheduleDate })
+        .create({
+            departureTime,
+            arrivalTime,
+            departureAirport,
+            arrivalAirport,
+            scheduleDateTime,
+            flightName,
+            price
+        })
         .then((data) => {
             console.log("Added successfully...");
             console.log(data);

@@ -1,0 +1,43 @@
+#container {
+    display: flex;
+    min-height: 100vh;
+    width: 100%;
+    flex-direction: column;
+    background-color: #cccccc;
+}
+
+.reservation-container {
+    margin-left: 40px;
+    margin-right: 40px;
+    overflow-y: scroll;
+    max-height: 100vh;
+}
+
+.reservation-container::-webkit-scrollbar {
+    display: none;
+    /* Chrome, Safari ve Edge */
+}
+
+.header-container {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.loading-icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translateY(-50%);
+    transform: translateX(-50%);
+}
+
+h5.loading-icon {
+    font-size: 20px;
+}
+
+#sort {
+    background-color: transparent;
+    border-color: transparent;
+}

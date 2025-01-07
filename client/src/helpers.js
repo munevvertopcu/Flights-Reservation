@@ -79,3 +79,13 @@ export const getRandomPrice = () => {
     const randomIndex = Math.floor(Math.random() * prices.length);
     return prices[randomIndex];
 }
+
+export const getScheduleDateTime = (data) => {
+    if (data.flightDirection === "D") {
+        return new Date(data.scheduleDateTime);
+    }
+    else {
+        const amsterdamDate = addTimeAndFormat(data.scheduleDateTime, -2, -30).date;
+        return amsterdamDate;
+    }
+}

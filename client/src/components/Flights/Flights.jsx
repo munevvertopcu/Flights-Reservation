@@ -1,15 +1,18 @@
 import React, { useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 import './Flights.style.css';
 import flight_takeoff from '../../assets/flight_takeoff.svg';
 import flight_landing from '../../assets/flight_landing.svg';
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import plane from '../../assets/plane.svg';
-import { hoursDifference, getRandomPrice, addTimeAndFormat } from "../../helpers";
+import { hoursDifference, getRandomPrice, addTimeAndFormat, getScheduleDateTime } from "../../helpers";
 import { Post } from "../../controllers/httpControllers";
 import FlightDetail from "./FlightDetail";
 
 function Flights({ data, city }) {
+
+    const navigate = useNavigate();
 
     const isDeparture = data.flightDirection === "D";
     const departureAirport = isDeparture ? "AMS" : data.route.destinations[0];
@@ -45,12 +48,19 @@ function Flights({ data, city }) {
             arrivalTime: arrivalTime,
             departureAirport: departureAirport,
             arrivalAirport: arrivalAirport,
-            scheduleDate: data.scheduleDate
-        }).then(() => toast.info("Your flight has been saved"))
+            scheduleDateTime: getScheduleDateTime(data),
+            flightName: data.flightName,
+            price: getRandomPrice()
+        }).then(() => {
+            toast.info("Your flight has been saved")
+        }).catch((error) => {
+            console.log("Error saving flight:", error);
+            toast.error("Something went wrong while booking the flight");
+        });
     }
 
     return (
-        <div className="flight-container">
+        <div className="flight-container" >
             <h5 id="h5">{isDeparture ? `Amsterdam - ${city}` : `${city} - Amsterdam `}</h5>
             <div className="time-container">
                 <FlightDetail
