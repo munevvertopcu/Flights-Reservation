@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import './MyFlights.style.css';
 import { Get } from "../../controllers/httpControllers";
+import { getAveragePrice } from "../../helpers";
 import Reservation from "../../components/Reservation";
 
 function MyFlights() {
@@ -54,7 +55,7 @@ function MyFlights() {
                                             <option value="time">Time</option>
                                         </select>
                                     </div>
-                                    <h5>Avg price: $324</h5>
+                                    <h5>Avg price: ${getAveragePrice(myFlights)}</h5>
                                 </div>
                                 {
                                     sortedFlights.map((item, index) => {

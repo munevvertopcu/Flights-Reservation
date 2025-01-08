@@ -99,7 +99,15 @@ function Home() {
                         <p>Discover</p>
                     </div>
                 </div>
-                <SelectDateAndPlace route={route} startDate={startDate} setRoute={setRoute} setStartDate={setStartDate} handleFetchClick={handleButtonClick} endDate={endDate} setEndDate={setEndDate} />
+                <SelectDateAndPlace 
+                route={route} 
+                startDate={startDate} 
+                setRoute={setRoute} 
+                setStartDate={setStartDate} 
+                handleFetchClick={handleButtonClick} 
+                endDate={endDate} 
+                setEndDate={setEndDate} 
+                />
                 {
                     isLoading && flights?.length == 0 ?
                         <img src="./spinner.svg" className="spinner" /> :

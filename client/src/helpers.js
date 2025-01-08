@@ -89,3 +89,15 @@ export const getScheduleDateTime = (data) => {
         return amsterdamDate;
     }
 }
+
+export function getAveragePrice(array) {
+    if (array.length === 0) {
+        return 0;
+    }
+    let total = 0;
+    for (let i = 0; i < array.length; i++) {
+        total += array[i].price;
+    }
+    const result = total / array.length;
+    return Math.floor(result)
+}
