@@ -25,7 +25,7 @@ function Home() {
 
     const scrollContainerRef = useRef(null);
 
-    const handleButtonClick = () => {
+    const handleButtonClick = async () => {
 
         const requiredFields = [route, startDate];
         if (selectionTripMode === 1) requiredFields.push(endDate);
@@ -37,8 +37,10 @@ function Home() {
 
         if (!hasFetched) {
             dispatch(resetFlights());
-            dispatch(fetchFlights({ date: formatDate(startDate), route: route, page: 0, direction: selectionDirectionMode === 1 ? "D" : "A" }));
-            fetchCityName();
+            await Promise.all([
+                dispatch(fetchFlights({ date: formatDate(startDate), route: route, page: 0, direction: selectionDirectionMode === 1 ? "D" : "A" })),
+                fetchCityName()
+            ]);
             setHasFetched(true);
         }
     };
@@ -99,14 +101,14 @@ function Home() {
                         <p>Discover</p>
                     </div>
                 </div>
-                <SelectDateAndPlace 
-                route={route} 
-                startDate={startDate} 
-                setRoute={setRoute} 
-                setStartDate={setStartDate} 
-                handleFetchClick={handleButtonClick} 
-                endDate={endDate} 
-                setEndDate={setEndDate} 
+                <SelectDateAndPlace
+                    route={route}
+                    startDate={startDate}
+                    setRoute={setRoute}
+                    setStartDate={setStartDate}
+                    handleFetchClick={handleButtonClick}
+                    endDate={endDate}
+                    setEndDate={setEndDate}
                 />
                 {
                     isLoading && flights?.length == 0 ?
