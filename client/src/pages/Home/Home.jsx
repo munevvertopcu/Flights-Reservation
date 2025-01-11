@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useSelector, useDispatch } from 'react-redux';
+import { useNavigate } from "react-router-dom";
 import './Home.style.css';
 import instance from "../../services/instance";
 import SelectDateAndPlace from "../../components/SelectDateAndPlace";
@@ -11,6 +12,7 @@ import { fetchFlights, resetFlights, } from "../../redux/features/flightList/fli
 import { formatDate } from "../../helpers";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { Modal } from 'antd';
 
 function Home() {
 
@@ -19,29 +21,85 @@ function Home() {
     const [endDate, setEndDate] = useState();
     const [hasFetched, setHasFetched] = useState(false);
     const [city, setCity] = useState("");
+    const [showReturnFlights, setShowReturnFlights] = useState(false);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    const navigate = useNavigate();
 
     const dispatch = useDispatch();
     const { flights, page, totalPages, isLoading, selectionDirectionMode, selectionTripMode } = useSelector((state) => state.flights);
 
     const scrollContainerRef = useRef(null);
 
-    const handleButtonClick = async () => {
+    const handleOk = () => {
+        if (selectionTripMode === 1 && !showReturnFlights) {
+            fetchReturnFlights();
+        }
+        else {
+            dispatch(resetFlights())
+            navigate("/myflights")
+        }
+        setIsModalOpen(false);
+    };
 
+    const handleCancel = () => {
+        setIsModalOpen(false);
+    };
+
+    const validateInputs = () => {
         const requiredFields = [route, startDate];
         if (selectionTripMode === 1) requiredFields.push(endDate);
 
         if (requiredFields.some(field => !field)) {
             toast.error("Please fill in all fields!");
-            return;
+            return false;
         }
+        return true;
+    };
 
-        if (!hasFetched) {
-            dispatch(resetFlights());
+    const resetDataBeforeFetch = () => {
+        dispatch(resetFlights());
+        setShowReturnFlights(false);
+    };
+
+    const fetchInitialData = async () => {
+        try {
             await Promise.all([
-                dispatch(fetchFlights({ date: formatDate(startDate), route: route, page: 0, direction: selectionDirectionMode === 1 ? "D" : "A" })),
+                dispatch(fetchFlights({
+                    date: formatDate(startDate),
+                    route: route,
+                    page: 0,
+                    direction: selectionDirectionMode === 1 ? "D" : "A"
+                })),
                 fetchCityName()
             ]);
+        } catch (error) {
+            console.error("Error fetching initial data:", error);
+            toast.error("An error occurred while fetching flights. Please try again.");
+        }
+    };
+
+    const handleButtonClick = async () => {
+        if (!validateInputs()) return;
+
+        if (!hasFetched) {
+            resetDataBeforeFetch();
+            await fetchInitialData();
             setHasFetched(true);
+        }
+    };
+
+    const fetchReturnFlights = () => {
+        if (endDate) {
+            dispatch(resetFlights())
+            dispatch(fetchFlights({
+                date: formatDate(endDate),
+                route: route,
+                page: 0,
+                direction: selectionDirectionMode === 1 ? "A" : "D"
+            })).then(() => {
+                setShowReturnFlights(true);
+            });
         }
     };
 
@@ -55,6 +113,12 @@ function Home() {
     };
 
     useEffect(() => {
+        if (hasFetched && !isLoading && flights.length === 0) {
+            toast.error("No flights found for the selected route and date.");
+        }
+    }, [flights, hasFetched, isLoading]);
+
+    useEffect(() => {
         const handleScroll = () => {
             const container = scrollContainerRef.current;
             if (!container) return;
@@ -65,7 +129,20 @@ function Home() {
                 container.scrollHeight * 0.9
             ) {
                 if (!isLoading && page <= totalPages) {
-                    dispatch(fetchFlights({ date: formatDate(startDate), route: route, page: page, direction: selectionDirectionMode === 1 ? "D" : "A" }));
+                    if (selectionTripMode === 1 && showReturnFlights) {
+                        dispatch(fetchFlights({
+                            date: formatDate(endDate),
+                            route: route,
+                            page: page,
+                            direction: selectionDirectionMode === 1 ? "A" : "D"
+                        }))
+                    } else
+                        dispatch(fetchFlights({
+                            date: formatDate(startDate),
+                            route: route,
+                            page: page,
+                            direction: selectionDirectionMode === 1 ? "D" : "A"
+                        }));
                 }
             }
         };
@@ -80,11 +157,11 @@ function Home() {
                 container.removeEventListener("scroll", handleScroll);
             }
         };
-    }, [dispatch, startDate, route, page, totalPages, isLoading]);
+    }, [dispatch, startDate, route, page, totalPages, isLoading, showReturnFlights, selectionTripMode, endDate]);
 
     useEffect(() => {
         setHasFetched(false)
-    }, [dispatch, startDate, route, selectionDirectionMode]);
+    }, [dispatch, startDate, endDate, route, selectionDirectionMode, selectionTripMode]);
 
     return (
         <div className='container'>
@@ -116,7 +193,11 @@ function Home() {
                         <div className="flight-parent" ref={scrollContainerRef}>
                             {
                                 flights?.map((item, index) =>
-                                    <Flights city={city} data={item} key={index} />
+                                    <Flights
+                                        city={city}
+                                        data={item}
+                                        key={index}
+                                        onFlightBooking={() => setIsModalOpen(true)} />
                                 )
                             }
                             {
@@ -126,6 +207,17 @@ function Home() {
                         </div>
                 }
                 <ToastContainer />
+                <Modal open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
+                    {
+                        showReturnFlights ?
+                            <p>Return flight booked.</p> :
+                            <p>Your flight has been saved.</p>
+                    }
+                    {
+                        selectionTripMode === 1 && !showReturnFlights &&
+                        <p>Click on the "OK" button to list return flights.</p>
+                    }
+                </Modal>
             </div>
         </div>
     )

@@ -15,7 +15,7 @@ export const fetchFlights = createAsyncThunk('flights/fetchFlights', async ({ ro
         const response = await instance.get(`/flights?scheduleDate=${date}&flightDirection=${direction}&route=${route}&page=${page}`);
         console.log(response)
         const linkHeader = response.headers.link;
-        const data = response.data.flights;
+        const data = Array.isArray(response.data.flights) ? response.data.flights : [];
         return { flights: data, linkHeader: linkHeader || null };
     } catch (error) {
         return error

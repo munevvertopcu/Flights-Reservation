@@ -28,10 +28,14 @@ function MyFlights() {
 
     const sortedFlights = [...myFlights].sort((a, b) => {
         switch (sortCriteria) {
-            case "price":
+            case "highest-price":
                 return b.price - a.price;
-            case "time":
+            case "lowest-price":
+                return a.price - b.price;
+            case "newest-time":
                 return new Date(b.scheduleDateTime) - new Date(a.scheduleDateTime);
+            case "oldest-time":
+                return new Date(a.scheduleDateTime) - new Date(b.scheduleDateTime);
             default:
                 return 0;
         }
@@ -51,8 +55,10 @@ function MyFlights() {
                                         <label>Sort by:  </label>
                                         <select style={{ fontWeight: "bold" }} id="sort" onChange={(e) => setSortCriteria(e.target.value)} >
                                             <option value="recommended">Recommended</option>
-                                            <option value="price">Price</option>
-                                            <option value="time">Time</option>
+                                            <option value="highest-price">Highest Price</option>
+                                            <option value="lowest-price">Lowest Price</option>
+                                            <option value="newest-time">Newest Time</option>
+                                            <option value="oldest-time">Oldest Time</option>
                                         </select>
                                     </div>
                                     <h5>Avg price: ${getAveragePrice(myFlights)}</h5>

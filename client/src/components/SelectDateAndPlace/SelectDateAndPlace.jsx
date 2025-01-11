@@ -31,27 +31,51 @@ function SelectDateAndPlace({ route, startDate, setRoute, setStartDate, handleFe
                     <h4>BOOK YOUR FLIGHT</h4>
                 </div>
                 <div className="select-container">
-                    <SelectionButton selectionMode={selectionDirectionMode} updatedSwitchData={updatedSwitchDirection} buttonName1="Departure" buttonName2="Arrival" />
-                    <SelectionButton selectionMode={selectionTripMode} updatedSwitchData={updatedSwitchTrip} buttonName1="Round Trip" buttonName2="One Way" />
+                    <SelectionButton
+                        selectionMode={selectionDirectionMode}
+                        updatedSwitchData={updatedSwitchDirection}
+                        buttonName1="Departure"
+                        buttonName2="Arrival" />
+                    <SelectionButton
+                        selectionMode={selectionTripMode}
+                        updatedSwitchData={updatedSwitchTrip}
+                        buttonName1="Round Trip"
+                        buttonName2="One Way" />
                 </div>
             </div>
             <div className="select-container">
                 <div className="input-wrapper">
-                    <input className="input-1" value={selectionDirectionMode === 1 ? "Amsterdam" : route} onChange={(text) => setRoute(text.target.value)} />
+                    <input
+                        className="input-1"
+                        value={selectionDirectionMode === 1 ? "Amsterdam" : route}
+                        onChange={(text) => setRoute(text.target.value)} />
                     <img className="input-icon" src={plane_take_off} />
                 </div>
                 <div className="input-wrapper">
-                    <input className="input-2 plane-icon" value={selectionDirectionMode === 2 ? "Amsterdam" : route} onChange={(text) => setRoute(text.target.value)} />
+                    <input
+                        className="input-2 plane-icon"
+                        value={selectionDirectionMode === 2 ? "Amsterdam" : route}
+                        onChange={(text) => setRoute(text.target.value)} />
                     <img className="input-icon" src={plane_land} />
                 </div>
                 <div className="input-wrapper">
-                    <DatePicker className="input-1" dateFormat="yyyy-MM-dd" selected={startDate} onChange={(date) => setStartDate(date)} minDate={new Date()} />
+                    <DatePicker
+                        className="input-1"
+                        dateFormat="yyyy-MM-dd"
+                        selected={startDate}
+                        onChange={(date) => setStartDate(date)}
+                        minDate={new Date()} />
                     <img className="input-icon" src={calender} />
                 </div>
                 {
                     selectionTripMode == 1 &&
                     <div className="input-wrapper">
-                        <DatePicker className="input-2" dateFormat="yyyy-MM-dd" selected={endDate} onChange={(date) => setEndDate(date)} minDate={new Date()} />
+                        <DatePicker
+                            className="input-2"
+                            dateFormat="yyyy-MM-dd"
+                            selected={endDate}
+                            onChange={(date) => setEndDate(date)}
+                            minDate={new Date(startDate)} />
                         <img className="input-icon" src={calender} />
                     </div>
                 }

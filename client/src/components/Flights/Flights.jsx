@@ -1,5 +1,4 @@
-import React, { useMemo } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useMemo, useState } from "react";
 import './Flights.style.css';
 import flight_takeoff from '../../assets/flight_takeoff.svg';
 import flight_landing from '../../assets/flight_landing.svg';
@@ -10,9 +9,9 @@ import { hoursDifference, getRandomPrice, addTimeAndFormat, getScheduleDateTime 
 import { Post } from "../../controllers/httpControllers";
 import FlightDetail from "./FlightDetail";
 
-function Flights({ data, city }) {
+function Flights({ data, city, onFlightBooking }) {
 
-    const navigate = useNavigate();
+    const [loading, setLoading] = useState(false);
 
     const isDeparture = data.flightDirection === "D";
     const departureAirport = isDeparture ? "AMS" : data.route.destinations[0];
@@ -31,7 +30,6 @@ function Flights({ data, city }) {
     }, [data.flightDirection, data.scheduleTime, data.scheduleDateTime]);
 
     function handleFlightBooking() {
-
         const currentDate = new Date();
         const flightDate = new Date(
             isDeparture
@@ -43,6 +41,7 @@ function Flights({ data, city }) {
             toast.error("You can't buy past-dated tickets");
             return;
         }
+        setLoading(true);
         Post("/save", {
             departureTime: departureTime,
             arrivalTime: arrivalTime,
@@ -52,10 +51,12 @@ function Flights({ data, city }) {
             flightName: data.flightName,
             price: getRandomPrice()
         }).then(() => {
-            toast.info("Your flight has been saved")
+            onFlightBooking();
         }).catch((error) => {
             console.log("Error saving flight:", error);
             toast.error("Something went wrong while booking the flight");
+        }).finally(() => {
+            setLoading(false);
         });
     }
 
@@ -89,9 +90,12 @@ function Flights({ data, city }) {
                     <h5 style={{ color: "#4c2897" }}>Price: ${getRandomPrice()}</h5>
                     <p id="p">One Way</p>
                 </div>
-                <button className="book-flight-button" onClick={() => handleFlightBooking()}>
-                    Book Flight
-                </button>
+                {
+                    loading ? <img src="./spinner.svg" /> :
+                        <button className="book-flight-button" onClick={() => handleFlightBooking()}>
+                            Book Flight
+                        </button>
+                }
             </div>
             <ToastContainer />
         </div>
