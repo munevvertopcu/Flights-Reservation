@@ -8,23 +8,26 @@ import plane from '../../assets/plane.svg';
 import { hoursDifference, getRandomPrice, addTimeAndFormat, getScheduleDateTime } from "../../helpers";
 import { Post } from "../../controllers/httpControllers";
 import FlightDetail from "./FlightDetail";
+import { useSelector } from 'react-redux';
 
-function Flights({ data, city, onFlightBooking }) {
+function Flights({ data, city, onFlightBooking, showReturnFlights, setSelectedDepartureFlight, selectedDepartureFlight }) {
 
     const [loading, setLoading] = useState(false);
+
+    const { selectionTripMode } = useSelector((state) => state.flights);
 
     const isDeparture = data.flightDirection === "D";
     const departureAirport = isDeparture ? "AMS" : data.route.destinations[0];
     const arrivalAirport = isDeparture ? data.route.destinations[0] : "AMS";
 
     const departureTime = useMemo(() => {
-        return data.flightDirection === "D"
+        return isDeparture
             ? data.scheduleTime.slice(0, -3)
             : addTimeAndFormat(data.scheduleDateTime, -2, -30).amsterdamTime;
     }, [data.flightDirection, data.scheduleTime, data.scheduleDateTime]);
 
     const arrivalTime = useMemo(() => {
-        return data.flightDirection === "A"
+        return !isDeparture
             ? data.scheduleTime.slice(0, -3)
             : addTimeAndFormat(data.scheduleDateTime, 6, 20).amsterdamTime;
     }, [data.flightDirection, data.scheduleTime, data.scheduleDateTime]);
@@ -41,8 +44,8 @@ function Flights({ data, city, onFlightBooking }) {
             toast.error("You can't buy past-dated tickets");
             return;
         }
-        setLoading(true);
-        Post("/save", {
+
+        const flightDetails = {
             departureTime: departureTime,
             arrivalTime: arrivalTime,
             departureAirport: departureAirport,
@@ -50,14 +53,41 @@ function Flights({ data, city, onFlightBooking }) {
             scheduleDateTime: getScheduleDateTime(data),
             flightName: data.flightName,
             price: getRandomPrice()
-        }).then(() => {
-            onFlightBooking();
-        }).catch((error) => {
-            console.log("Error saving flight:", error);
-            toast.error("Something went wrong while booking the flight");
-        }).finally(() => {
-            setLoading(false);
-        });
+        };
+
+        if (selectionTripMode === 2) {
+            setLoading(true);
+            Post("/save", flightDetails)
+                .then(() => {
+                    onFlightBooking();
+                }).catch((error) => {
+                    console.log("Error saving flight:", error);
+                    toast.error("Something went wrong while booking the flight");
+                }).finally(() => {
+                    setLoading(false);
+                });
+        } else {
+            if (!showReturnFlights) {
+                setSelectedDepartureFlight(flightDetails);
+                onFlightBooking();
+                return;
+            }
+
+            setLoading(true);
+            Promise.all(
+                [
+                    Post("/save", selectedDepartureFlight),
+                    Post("/save", flightDetails)
+                ]
+            ).then(() => {
+                onFlightBooking();
+            }).catch((error) => {
+                console.log("Error saving flight:", error);
+                toast.error("Something went wrong while booking the flight");
+            }).finally(() => {
+                setLoading(false);
+            });
+        }
     }
 
     return (
@@ -93,7 +123,10 @@ function Flights({ data, city, onFlightBooking }) {
                 {
                     loading ? <img src="./spinner.svg" /> :
                         <button className="book-flight-button" onClick={() => handleFlightBooking()}>
-                            Book Flight
+                            {!showReturnFlights && selectionTripMode === 1 ?
+                                "Select & Continue" :
+                                "Book Flight"
+                            }
                         </button>
                 }
             </div>

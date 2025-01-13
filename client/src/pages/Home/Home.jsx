@@ -23,11 +23,12 @@ function Home() {
     const [city, setCity] = useState("");
     const [showReturnFlights, setShowReturnFlights] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedDepartureFlight, setSelectedDepartureFlight] = useState(null);
 
     const navigate = useNavigate();
 
     const dispatch = useDispatch();
-    const { flights, page, totalPages, isLoading, selectionDirectionMode, selectionTripMode } = useSelector((state) => state.flights);
+    const { flights, page, totalPages, isLoading, selectionDirectionMode, selectionTripMode, error, statusText } = useSelector((state) => state.flights);
 
     const scrollContainerRef = useRef(null);
 
@@ -63,19 +64,17 @@ function Home() {
     };
 
     const fetchInitialData = async () => {
-        try {
-            await Promise.all([
-                dispatch(fetchFlights({
-                    date: formatDate(startDate),
-                    route: route,
-                    page: 0,
-                    direction: selectionDirectionMode === 1 ? "D" : "A"
-                })),
-                fetchCityName()
-            ]);
-        } catch (error) {
-            console.error("Error fetching initial data:", error);
-            toast.error("An error occurred while fetching flights. Please try again.");
+        await Promise.all([
+            dispatch(fetchFlights({
+                date: formatDate(startDate),
+                route: route,
+                page: 0,
+                direction: selectionDirectionMode === 1 ? "D" : "A"
+            })),
+            fetchCityName()
+        ]);
+        if (statusText === "No Content") {
+            toast.error("No flights found for the selected route and date.");
         }
     };
 
@@ -113,10 +112,10 @@ function Home() {
     };
 
     useEffect(() => {
-        if (hasFetched && !isLoading && flights.length === 0) {
-            toast.error("No flights found for the selected route and date.");
+        if (error) {
+            toast.error("An error occurred while fetching flights. Please try again. " + error);
         }
-    }, [flights, hasFetched, isLoading]);
+    }, [error]);
 
     useEffect(() => {
         const handleScroll = () => {
@@ -197,7 +196,11 @@ function Home() {
                                         city={city}
                                         data={item}
                                         key={index}
-                                        onFlightBooking={() => setIsModalOpen(true)} />
+                                        onFlightBooking={() => setIsModalOpen(true)}
+                                        showReturnFlights={showReturnFlights}
+                                        selectedDepartureFlight={selectedDepartureFlight}
+                                        setSelectedDepartureFlight={setSelectedDepartureFlight}
+                                    />
                                 )
                             }
                             {
@@ -209,13 +212,14 @@ function Home() {
                 <ToastContainer />
                 <Modal open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
                     {
-                        showReturnFlights ?
-                            <p>Return flight booked.</p> :
-                            <p>Your flight has been saved.</p>
-                    }
-                    {
-                        selectionTripMode === 1 && !showReturnFlights &&
-                        <p>Click on the "OK" button to list return flights.</p>
+                        selectionTripMode === 2 ?
+                            <p>Flight booked.</p> :
+                            (
+                                !showReturnFlights ?
+                                    <p>Departure flight selected.
+                                        Click on the "OK" button to list return flights.</p> :
+                                    <p>Departure and return flights booked.</p>
+                            )
                     }
                 </Modal>
             </div>
