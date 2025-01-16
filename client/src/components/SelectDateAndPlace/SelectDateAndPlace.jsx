@@ -30,7 +30,7 @@ function SelectDateAndPlace({ route, startDate, setRoute, setStartDate, handleFe
                     <img className="plane-icon" src={plane} />
                     <h4>BOOK YOUR FLIGHT</h4>
                 </div>
-                <div className="select-container">
+                <div className="select-button">
                     <SelectionButton
                         selectionMode={selectionDirectionMode}
                         updatedSwitchData={updatedSwitchDirection}

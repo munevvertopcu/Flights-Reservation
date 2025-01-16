@@ -123,9 +123,10 @@ function Flights({ data, city, onFlightBooking, showReturnFlights, setSelectedDe
                 {
                     loading ? <img src="./spinner.svg" /> :
                         <button className="book-flight-button" onClick={() => handleFlightBooking()}>
-                            {!showReturnFlights && selectionTripMode === 1 ?
-                                "Select & Continue" :
-                                "Book Flight"
+                            {
+                                !showReturnFlights && selectionTripMode === 1 ?
+                                    "Select & Continue" :
+                                    "Book Flight"
                             }
                         </button>
                 }

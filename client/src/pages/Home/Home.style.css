@@ -44,15 +44,20 @@
 }
 
 .flight-parent {
-    overflow-y: scroll;
     height: 60%;
-    width: 50%;
+    width: 70%;
     margin-top: 15px;
     margin-left: 15px;
+    display: flex;
+}
+
+.flight-card {
+    width: 70%;
+    overflow-y: scroll;
     position: relative;
 }
 
-.flight-parent::-webkit-scrollbar {
+.flight-card::-webkit-scrollbar {
     display: none;
     /* Chrome, Safari ve Edge */
 }

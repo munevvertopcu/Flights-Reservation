@@ -2,13 +2,17 @@
     background-color: hsl(0, 0%, 100%);
     border-radius: 10px;
     width: 70%;
-    padding-left: 10px;
-    padding-right: 10px;
     padding-bottom: 10px;
     margin-left: 15px;
 }
 
 .select-container {
+    display: flex;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+.select-button {
     display: flex;
 }
 
@@ -39,12 +43,15 @@
     position: absolute;
     left: 10px;
     top: 50%;
-    transform: translateY(-50%); /*İkonu dikey olarak ortalar */
+    transform: translateY(-50%);
+    /*İkonu dikey olarak ortalar */
 }
 
 .select-header {
     display: flex;
     justify-content: space-between;
+    margin-left: 10px;
+    margin-right: 10px;
 }
 
 .icon-header {
@@ -63,4 +70,5 @@
     border-radius: 7px;
     padding: 7px;
     margin-top: 20px;
+    margin-left: 10px;
 }

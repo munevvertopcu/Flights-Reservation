@@ -8,8 +8,9 @@ import airplane_icon from '../../assets/airplane_icon.svg';
 import tag from '../../assets/tag.svg';
 import world from '../../assets/world.svg';
 import Flights from '../../components/Flights';
+import SortAndFilterFlights from "../../components/SortAndFilterFlights";
 import { fetchFlights, resetFlights, } from "../../redux/features/flightList/flightListSlice";
-import { formatDate } from "../../helpers";
+import { formatDate, getScheduleDateTime } from "../../helpers";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Modal } from 'antd';
@@ -24,6 +25,8 @@ function Home() {
     const [showReturnFlights, setShowReturnFlights] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedDepartureFlight, setSelectedDepartureFlight] = useState(null);
+    const [sortCriteria, setSortCriteria] = useState("recommended");
+    const [filterCriteria, setFilterCriteria] = useState("No Filter");
 
     const navigate = useNavigate();
 
@@ -31,13 +34,15 @@ function Home() {
     const { flights, page, totalPages, isLoading, selectionDirectionMode, selectionTripMode, error, statusText } = useSelector((state) => state.flights);
 
     const scrollContainerRef = useRef(null);
+    const hasFlights = flights?.length > 0;
+    const isEmptyState = isLoading && !hasFlights;
 
     const handleOk = () => {
+        resetDataBeforeFetch();
         if (selectionTripMode === 1 && !showReturnFlights) {
             fetchReturnFlights();
         }
         else {
-            dispatch(resetFlights())
             navigate("/myflights")
         }
         setIsModalOpen(false);
@@ -61,6 +66,8 @@ function Home() {
     const resetDataBeforeFetch = () => {
         dispatch(resetFlights());
         setShowReturnFlights(false);
+        setFilterCriteria("No Filter");
+        setSortCriteria("recommended");
     };
 
     const fetchInitialData = async () => {
@@ -90,7 +97,6 @@ function Home() {
 
     const fetchReturnFlights = () => {
         if (endDate) {
-            dispatch(resetFlights())
             dispatch(fetchFlights({
                 date: formatDate(endDate),
                 route: route,
@@ -110,6 +116,33 @@ function Home() {
             console.log(error)
         }
     };
+
+    const sortedFlights = [...flights].sort((a, b) => {
+        switch (sortCriteria) {
+            case "newest-time":
+                return new Date(b.scheduleDateTime) - new Date(a.scheduleDateTime);
+            case "oldest-time":
+                return new Date(a.scheduleDateTime) - new Date(b.scheduleDateTime);
+            default:
+                return 0;
+        }
+    });
+
+    const filteredFlights = sortedFlights.filter(flight => {
+        if (!filterCriteria || filterCriteria === "No Filter") return true;
+
+        const timeRanges = {
+            "05:00 - 11:59": [5, 12],
+            "12:00 - 21:59": [12, 22],
+        };
+
+        const flightDate = getScheduleDateTime(flight);
+        const options = { timeZone: "Europe/Amsterdam", hour: "2-digit", hourCycle: "h23" };
+        const flightHour = parseInt(new Intl.DateTimeFormat("en-US", options).format(flightDate), 10);
+
+        const [start, end] = timeRanges[filterCriteria];
+        return flightHour >= start && flightHour < end;
+    });
 
     useEffect(() => {
         if (error) {
@@ -187,26 +220,33 @@ function Home() {
                     setEndDate={setEndDate}
                 />
                 {
-                    isLoading && flights?.length == 0 ?
+                    isEmptyState ?
                         <img src="./spinner.svg" className="spinner" /> :
-                        <div className="flight-parent" ref={scrollContainerRef}>
-                            {
-                                flights?.map((item, index) =>
-                                    <Flights
-                                        city={city}
-                                        data={item}
-                                        key={index}
-                                        onFlightBooking={() => setIsModalOpen(true)}
-                                        showReturnFlights={showReturnFlights}
-                                        selectedDepartureFlight={selectedDepartureFlight}
-                                        setSelectedDepartureFlight={setSelectedDepartureFlight}
-                                    />
-                                )
-                            }
-                            {
-                                isLoading &&
-                                <img src="./spinner.svg" className="loading" />
-                            }
+                        hasFlights &&
+                        <div className="flight-parent" >
+                            <div className="flight-card" ref={scrollContainerRef}>
+                                {
+                                    filteredFlights?.map((item, index) =>
+                                        <Flights
+                                            city={city}
+                                            data={item}
+                                            key={index}
+                                            onFlightBooking={() => setIsModalOpen(true)}
+                                            showReturnFlights={showReturnFlights}
+                                            selectedDepartureFlight={selectedDepartureFlight}
+                                            setSelectedDepartureFlight={setSelectedDepartureFlight}
+                                        />
+                                    )
+                                }
+                                {
+                                    isLoading &&
+                                    <img src="./spinner.svg" className="loading" />
+                                }
+                            </div>
+                            <SortAndFilterFlights
+                                setSortCriteria={setSortCriteria}
+                                setFilterCriteria={setFilterCriteria}
+                                filterCriteria={filterCriteria} />
                         </div>
                 }
                 <ToastContainer />

@@ -53,7 +53,7 @@ function MyFlights() {
                                 <div className="header-container">
                                     <div>
                                         <label>Sort by:  </label>
-                                        <select style={{ fontWeight: "bold" }} id="sort" onChange={(e) => setSortCriteria(e.target.value)} >
+                                        <select id="sort" onChange={(e) => setSortCriteria(e.target.value)} >
                                             <option value="recommended">Recommended</option>
                                             <option value="highest-price">Highest Price</option>
                                             <option value="lowest-price">Lowest Price</option>
