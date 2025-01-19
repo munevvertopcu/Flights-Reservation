@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useSelector, useDispatch } from 'react-redux';
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import './Home.style.css';
 import instance from "../../services/instance";
 import SelectDateAndPlace from "../../components/SelectDateAndPlace";
@@ -205,50 +205,59 @@ function Home() {
                     </div>
                     <div className="icon-container">
                         <img className="icon" src={tag} />
-                        <p className="text">Deals</p>
+                        <a href="https://www.schiphol.nl/en/at-schiphol/shop/" target="_blank" className="text">Deals</a>
                         <img className="icon" src={world} />
-                        <p>Discover</p>
+                        <Link to="/myflights">Reservations</Link>
                     </div>
                 </div>
-                <SelectDateAndPlace
-                    route={route}
-                    startDate={startDate}
-                    setRoute={setRoute}
-                    setStartDate={setStartDate}
-                    handleFetchClick={handleButtonClick}
-                    endDate={endDate}
-                    setEndDate={setEndDate}
-                />
-                {
-                    isEmptyState ?
-                        <img src="./spinner.svg" className="spinner" /> :
-                        hasFlights &&
-                        <div className="flight-parent" >
-                            <div className="flight-card" ref={scrollContainerRef}>
-                                {
-                                    filteredFlights?.map((item, index) =>
-                                        <Flights
-                                            city={city}
-                                            data={item}
-                                            key={index}
-                                            onFlightBooking={() => setIsModalOpen(true)}
-                                            showReturnFlights={showReturnFlights}
-                                            selectedDepartureFlight={selectedDepartureFlight}
-                                            setSelectedDepartureFlight={setSelectedDepartureFlight}
-                                        />
-                                    )
-                                }
-                                {
-                                    isLoading &&
-                                    <img src="./spinner.svg" className="loading" />
-                                }
-                            </div>
-                            <SortAndFilterFlights
-                                setSortCriteria={setSortCriteria}
-                                setFilterCriteria={setFilterCriteria}
-                                filterCriteria={filterCriteria} />
-                        </div>
-                }
+                <div className="image-and-flights">
+                    <div className="flights-wrapper">
+                        <SelectDateAndPlace
+                            route={route}
+                            startDate={startDate}
+                            setRoute={setRoute}
+                            setStartDate={setStartDate}
+                            handleFetchClick={handleButtonClick}
+                            endDate={endDate}
+                            setEndDate={setEndDate}
+                        />
+                        {
+                            isEmptyState ?
+                                <img src="./spinner.svg" className="spinner" /> :
+                                hasFlights &&
+                                <div className="flight-parent" >
+                                    <div className="flight-card" ref={scrollContainerRef}>
+                                        {
+                                            filteredFlights?.map((item, index) =>
+                                                <Flights
+                                                    city={city}
+                                                    data={item}
+                                                    key={index}
+                                                    onFlightBooking={() => setIsModalOpen(true)}
+                                                    showReturnFlights={showReturnFlights}
+                                                    selectedDepartureFlight={selectedDepartureFlight}
+                                                    setSelectedDepartureFlight={setSelectedDepartureFlight}
+                                                />
+                                            )
+                                        }
+                                        {
+                                            isLoading &&
+                                            <img src="./spinner.svg" className="loading" />
+                                        }
+                                    </div>
+                                    <SortAndFilterFlights
+                                        setSortCriteria={setSortCriteria}
+                                        setFilterCriteria={setFilterCriteria}
+                                        filterCriteria={filterCriteria} />
+                                </div>
+                        }
+                    </div>
+                    <div className="image-container">
+                        <img src="./plane-image.jpg" alt="Image 1" className="custom-image" />
+                        <img src="./schipol.jpg" alt="Image 2" className="custom-image" />
+                        <img src="./amsterdam.jpg" alt="Image 3" className="custom-image" />
+                    </div>
+                </div>
                 <ToastContainer />
                 <Modal open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
                     {

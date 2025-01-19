@@ -39,5 +39,6 @@ export const Get = () => {
             } else {
                 console.error('There was a problem:', error.message);
             }
+            throw error;
         })
 }

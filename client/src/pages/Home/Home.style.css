@@ -21,6 +21,19 @@
     justify-content: space-between;
 }
 
+.image-and-flights {
+    overflow: hidden;
+    display: flex;
+    height: 100%;
+}
+
+.flights-wrapper {
+    width: 70%;
+    margin-left: 15px;
+    display: flex;
+    flex-direction: column;
+}
+
 .icon-container {
     display: flex;
     margin-left: 15px;
@@ -44,9 +57,7 @@
 }
 
 .flight-parent {
-    width: 70%;
     margin-top: 15px;
-    margin-left: 15px;
     display: flex;
     overflow: hidden;
 }
@@ -70,4 +81,20 @@
 
 .spinner {
     align-self: center;
+}
+
+.image-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 30%;
+    gap: 15px;
+}
+
+.custom-image {
+    width: 80%;
+    height: 30%;
+    object-fit: cover;
+    border-radius: 8px;
 }

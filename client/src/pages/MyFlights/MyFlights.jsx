@@ -3,6 +3,8 @@ import './MyFlights.style.css';
 import { Get } from "../../controllers/httpControllers";
 import { getAveragePrice } from "../../helpers";
 import Reservation from "../../components/Reservation";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function MyFlights() {
 
@@ -19,6 +21,7 @@ function MyFlights() {
                 console.log(response)
             } catch (error) {
                 console.error('Error during GET:', error);
+                toast.error("An error occurred while fetching reservations. Please try again. ")
             } finally {
                 setLoading(false);
             }
@@ -73,8 +76,8 @@ function MyFlights() {
                             </div>
                     )
             }
+            <ToastContainer />
         </div>
-
     )
 }
 
