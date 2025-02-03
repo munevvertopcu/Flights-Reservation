@@ -189,11 +189,11 @@ function Home() {
                 container.removeEventListener("scroll", handleScroll);
             }
         };
-    }, [dispatch, startDate, route, page, totalPages, isLoading, showReturnFlights, selectionTripMode, endDate]);
+    }, [startDate, route, page, totalPages, isLoading, showReturnFlights, selectionTripMode, endDate]);
 
     useEffect(() => {
         setHasFetched(false)
-    }, [dispatch, startDate, endDate, route, selectionDirectionMode, selectionTripMode]);
+    }, [startDate, endDate, route, selectionDirectionMode, selectionTripMode]);
 
     return (
         <div className='container'>
